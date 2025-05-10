@@ -69,20 +69,20 @@ Get: Event details
 POST /api/events
 
 Send: { "title": "Concert", "category": "Music", "venue": "Arena", "date": "2025-06-01", "seatCapacity": 100, "price": 50 }
-Header: Authorization: Bearer <admin-token>
+Header: Authorization: Bearer admin-token
 Get: New event
 
 
 PUT /api/events/:id
 
 Send: { "title": "New Title" }
-Header: Authorization: Bearer <admin-token>
+Header: Authorization: Bearer admin-token
 Get: Updated event
 
 
 DELETE /api/events/:id
 
-Header: Authorization: Bearer <admin-token>
+Header: Authorization: Bearer admin-token
 Get: { "message": "Event deleted" }
 
 
@@ -92,17 +92,17 @@ Bookings
 POST /api/bookings
 
 Send: { "eventId": "event-id", "quantity": 2 }
-Header: Authorization: Bearer <user-token>
+Header: Authorization: Bearer user-token
 Get: Booking details
 
 
 GET /api/bookings
 
-Header: Authorization: Bearer <user-token>
+Header: Authorization: Bearer user-token
 Get: List of bookings
 
 
 GET /api/bookings/:id
 
-Header: Authorization: Bearer <user-token>
+Header: Authorization: Bearer user-token
 Get: Booking details
