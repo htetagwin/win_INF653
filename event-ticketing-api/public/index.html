@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Ticketing System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .hidden { display: none; }
+    .spinner { border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-2xl font-bold">Event Ticketing System</h1>
+      <div>
+        <span id="auth-status" class="mr-4"></span>
+        <button id="logout-btn" class="bg-red-500 text-white px-4 py-2 rounded hidden">Logout</button>
+      </div>
+    </div>
+
+    <!-- Authentication Section -->
+    <div id="auth-section" class="mb-6">
+      <div id="register-form" class="bg-white p-4 rounded shadow mb-4">
+        <h2 class="text-xl font-semibold mb-2">Register</h2>
+        <form id="register">
+          <input type="text" id="reg-name" placeholder="Name" class="border p-2 w-full mb-2" required>
+          <input type="email" id="reg-email" placeholder="Email" class="border p-2 w-full mb-2" required>
+          <input type="password" id="reg-password" placeholder="Password" class="border p-2 w-full mb-2" required>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Register</button>
+        </form>
+        <p id="register-error" class="text-red-500 mt-2"></p>
+      </div>
+      <div id="login-form" class="bg-white p-4 rounded shadow">
+        <h2 class="text-xl font-semibold mb-2">Login</h2>
+        <form id="login">
+          <input type="email" id="login-email" placeholder="Email" class="border p-2 w-full mb-2" required>
+          <input type="password" id="login-password" placeholder="Password" class="border p-2 w-full mb-2" required>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+        </form>
+        <p id="login-error" class="text-red-500 mt-2"></p>
+      </div>
+    </div>
+
+    <!-- User View -->
+    <div id="user-view" class="hidden">
+      <!-- Browse Events -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-xl font-semibold mb-4">Browse Events</h2>
+    <div class="flex flex-col md:flex-row mb-4 gap-4">
+      <div class="flex-1">
+        <label for="filter-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+        <select id="filter-category" class="border p-2 w-full rounded">
+          <option value="">All Categories</option>
+        </select>
+      </div>
+      <div class="flex-1">
+        <label for="filter-venue" class="block text-sm font-medium text-gray-700 mb-1">Venue</label>
+        <input type="text" id="filter-venue" placeholder="Filter by venue (e.g., City Arena)" class="border p-2 w-full rounded">
+      </div>
+      <div class="flex-1">
+        <label for="filter-start-date" class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+        <input type="date" id="filter-start-date" class="border p-2 w-full rounded" title="Start Date">
+      </div>
+      <div class="flex-1">
+        <label for="filter-end-date" class="block text-sm font-medium text-gray-700 mb-1">End Date</label>
+        <input type="date" id="filter-end-date" class="border p-2 w-full rounded" title="End Date">
+      </div>
+      <button id="filter-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex items-center">
+        <span>Filter</span>
+        <div id="filter-spinner" class="spinner hidden ml-2"></div>
+      </button>
+      <button id="clear-filter-btn" class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">Clear</button>
+    </div>
+    <p id="filter-feedback" class="text-gray-600 mb-4"></p>
+    <div id="events-list" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+  </div>
+      <!-- Book Tickets -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-semibold mb-4">Book Tickets</h2>
+        <form id="book-tickets">
+          <input type="text" id="book-event-id" placeholder="Event ID" class="border p-2 w-full mb-4 rounded" required>
+          <input type="number" id="book-quantity" placeholder="Quantity" min="1" class="border p-2 w-full mb-4 rounded" required>
+          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Book</button>
+        </form>
+        <p id="book-error" class="text-red-500 mt-2"></p>
+      </div>
+      <!-- View Bookings -->
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4">My Bookings</h2>
+        <div id="bookings-list" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <!-- Admin View -->
+    <div id="admin-view" class="hidden">
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-xl font-semibold mb-4">Create Event</h2>
+    <form id="create-event">
+      <input type="hidden" id="event-id" name="event-id">
+      <input type="text" id="event-title" placeholder="Title" class="border p-2 w-full mb-4 rounded" required>
+      <textarea id="event-description" placeholder="Description" class="border p-2 w-full mb-4 rounded"></textarea>
+      <input type="text" id="event-category" placeholder="Category" class="border p-2 w-full mb-4 rounded">
+      <input type="text" id="event-venue" placeholder="Venue" class="border p-2 w-full mb-4 rounded">
+      <input type="date" id="event-date" class="border p-2 w-full mb-4 rounded" required>
+      <input type="text" id="event-time" placeholder="Time (e.g., 19:00)" class="border p-2 w-full mb-4 rounded">
+      <input type="number" id="event-seatCapacity" placeholder="Seat Capacity" min="1" class="border p-2 w-full mb-4 rounded" required>
+      <input type="number" id="event-price" placeholder="Price" min="0" step="0.01" class="border p-2 w-full mb-4 rounded" required>
+      <button type="submit" id="event-submit-btn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Create</button>
+    </form>
+    <p id="create-error" class="text-red-500 mt-2"></p>
+  </div>
+      <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-semibold mb-4">Manage Events</h2>
+        <div id="admin-events-list" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+      </div>
+    </div>
+  </div>
+  <script src="/app.js"></script>
+</body>
+</html>
